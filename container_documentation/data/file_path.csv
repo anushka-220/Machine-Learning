@@ -1,0 +1,53 @@
+Name,Age,Gender,City,Occupation
+Alice,25,Female,New York,Software Engineer
+Bob,30,Male,San Francisco,Data Scientist
+Charlie,28,Male,Los Angeles,Graphic Designer
+David,22,Male,Chicago,Student
+Eva,35,Female,Miami,Marketing Manager
+Frank,40,Male,Boston,Accountant
+Grace,32,Female,Seattle,Product Manager
+Harry,27,Male,Austin,Web Developer
+Ivy,29,Female,Denver,Teacher
+Jack,31,Male,Portland,Architect
+Katie,26,Female,Atlanta,HR Specialist
+Leo,34,Male,Dallas,Financial Analyst
+Mia,33,Female,Phoenix,Nurse
+Noah,24,Male,Houston,Software Developer
+Olivia,36,Female,San Diego,UX Designer
+Peter,28,Male,Philadelphia,Research Scientist
+Quinn,23,Female,Detroit,Student
+Ryan,39,Male,Minneapolis,Marketing Director
+Sara,29,Female,Tampa,Project Manager
+Tom,37,Male,Charlotte,Consultant
+Uma,31,Female,Orlando,Data Analyst
+Vince,25,Male,Sacramento,Graphic Designer
+Wendy,30,Female,Raleigh,Physician
+Xavier,28,Male,New Orleans,Musician
+Yara,26,Female,Indianapolis,Software Engineer
+Zack,33,Male,St. Louis,Product Designer
+Alice,29,Female,San Francisco,Data Scientist
+Bob,35,Male,Los Angeles,Graphic Designer
+Charlie,27,Male,Chicago,Student
+David,22,Male,Miami,Marketing Manager
+Eva,36,Female,New York,Software Engineer
+Frank,40,Male,San Francisco,Data Scientist
+Grace,33,Female,Los Angeles,Graphic Designer
+Harry,28,Male,Chicago,Student
+Ivy,30,Female,Miami,Marketing Manager
+Jack,32,Male,New York,Software Engineer
+Katie,26,Female,San Francisco,Data Scientist
+Leo,35,Male,Los Angeles,Graphic Designer
+Mia,29,Female,Chicago,Student
+Noah,25,Male,Miami,Marketing Manager
+Olivia,37,Female,New York,Software Engineer
+Peter,29,Male,San Francisco,Data Scientist
+Quinn,24,Female,Los Angeles,Graphic Designer
+Ryan,38,Male,Chicago,Student
+Sara,30,Female,Miami,Marketing Manager
+Tom,36,Male,New York,Software Engineer
+Uma,32,Female,San Francisco,Data Scientist
+Vince,26,Male,Los Angeles,Graphic Designer
+Wendy,31,Female,Chicago,Student
+Xavier,29,Male,Miami,Marketing Manager
+Yara,27,Female,New York,Software Engineer
+Zack,34,Male,San Francisco,Data Scientist
