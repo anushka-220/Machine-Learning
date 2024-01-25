@@ -1,5 +1,6 @@
 import numpy as np
 from PIL import Image
+from scipy.ndimage import convolve
 
 def read_image(image_path):
     img = Image.open(image_path).convert('L')  # Convert to grayscale
@@ -12,13 +13,11 @@ def laplacian(image):
                                    [-1, -1, -1]])
 
     # Ensure that the image and operator have compatible shapes
-    laplacian_image = np.abs(np.convolve(image, laplacian_operator, mode='same'))
+    laplacian_image = np.abs(convolve(image.astype(float), laplacian_operator, mode='constant'))
     return laplacian_image
 
 def heterogeneity_func(image):
-    
-    
-   # Logarithm of the image intensity
+    # Logarithm of the image intensity
     log_intensity = np.log1p(image)
 
     # Laplacian of LogF (abrupt change in intensity)
