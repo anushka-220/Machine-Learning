@@ -4,11 +4,13 @@ import math
 
 #Read image in grayscale
 #0 denotes grayscale
-img=cv2.imread('C:\\Users\\ANUSHKA SINGH\\Downloads\\1_amplitude.jpg', 0)
+
+#change the path to your own machine
+img=cv2.imread('D:\\Pranav\\Pictures\\Saved Pictures\\1_amplitude.jpg', 0)
 
 #retrieve the dimensions of the image
 #hh= height, ww= width of the image
-hh , ww =img.shape
+hh, ww = img.shape
 
 #get min max and mean value of image
 img_min = np.amin(img)

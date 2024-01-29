@@ -104,7 +104,7 @@ plt.show()
 
 # Read the spectral mask
 Hp = cv2.imread('spec-mask.png', cv2.IMREAD_GRAYSCALE) / 255.0
-#it fucks up here ^
+#it messes up here ^
 
 # Perform element-wise multiplication in the frequency domain
 Gp = Hp * Fp

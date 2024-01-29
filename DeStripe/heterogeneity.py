@@ -1,7 +1,7 @@
 import numpy as np
 from PIL import Image
 from scipy.ndimage import convolve
-
+import matplotlib.pyplot as plt
 def read_image(image_path):
     img = Image.open(image_path).convert('L')  # Convert to grayscale
     img_array = np.array(img)
@@ -39,8 +39,10 @@ def heterogeneity_func(image):
     return heterogeneity
 
 # Example usage:
-image_path = r"C:\Users\ANUSHKA SINGH\Downloads\1_amplitude.jpg"
+image_path = r"D:\\Pranav\\Pictures\\Saved Pictures\\1_amplitude.jpg"
 image = read_image(image_path)
 
 heterogeneity_result = heterogeneity_func(image)
 print(heterogeneity_result)
+plt.imshow(heterogeneity_result)
+plt.show()
