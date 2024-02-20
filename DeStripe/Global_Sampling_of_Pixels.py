@@ -1,6 +1,4 @@
 import numpy as np
-from PIL import Image
-from scipy.ndimage import convolve
 from heterogeneity import *
 
 def global_pixel_sampling(image):

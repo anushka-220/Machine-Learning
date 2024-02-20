@@ -1,9 +1,9 @@
 import numpy as np
-from scipy.ndimage import label, find_objects
+from scipy.ndimage import label
 from scipy.ndimage.measurements import center_of_mass
 
 from heterogeneity import *
-from Global_Sampling_of_Pixels import read_image, heterogeneity_func, global_pixel_sampling
+from Global_Sampling_of_Pixels import read_image, global_pixel_sampling
 
 
 
