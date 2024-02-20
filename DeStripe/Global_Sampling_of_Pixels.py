@@ -1,20 +1,23 @@
 import numpy as np
 from heterogeneity import *
 
+
 def global_pixel_sampling(image):
     # Step 1: Calculate H values of LogF
-    log_intensity = np.log1p(image) # CHECK THIS LATER
+    log_intensity = np.log1p(image)  # CHECK THIS LATER
     laplacian_log = laplacian(log_intensity)
 
     # Step 2: Form the histogram of H with 20 bins and variation within 0.05
     bin_width = 0.05
     num_bins = int((np.max(laplacian_log) - np.min(laplacian_log)) / bin_width)
-    
+
     hist, bin_edges = np.histogram(laplacian_log, bins=num_bins)
 
     # Step 3: Find the most spreading group of consecutive bins with non-zero populations
     non_zero_bins = np.nonzero(hist)[0]
-    consecutive_groups = np.split(non_zero_bins, np.where(np.diff(non_zero_bins) != 1)[0] + 1) #CHECK THIS LATER
+    consecutive_groups = np.split(
+        non_zero_bins, np.where(np.diff(non_zero_bins) != 1)[0] + 1
+    )  # CHECK THIS LATER
 
     most_spreading_group = max(consecutive_groups, key=len)
 
@@ -38,12 +41,9 @@ def global_pixel_sampling(image):
 
     return Pn1
 
+
 image_path = r"C:\\Users\ANUSHKA SINGH\Downloads\\1_amplitude.jpg"
 image = read_image(image_path)
 
 sampled_pixels = global_pixel_sampling(image)
 print("Sampled Pixels (Pn1):", sampled_pixels)
-
-
-    
-    

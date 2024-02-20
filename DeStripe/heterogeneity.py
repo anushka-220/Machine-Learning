@@ -2,18 +2,22 @@ import numpy as np
 from PIL import Image
 from scipy.ndimage import convolve
 import matplotlib.pyplot as plt
+
+
 def read_image(image_path):
-    img = Image.open(image_path).convert('L')  # Convert to grayscale
+    img = Image.open(image_path).convert("L")  # Convert to grayscale
     img_array = np.array(img)
     return img_array
 
+
 def laplacian(image):
-    #This was provided in the paper itself
-    laplacian_operator = np.array([[-1, -1, -1],
-                                   [-1, 8, -1],
-                                   [-1, -1, -1]])
-    laplacian_image = np.abs(convolve(image.astype(float), laplacian_operator, mode='constant'))
+    # This was provided in the paper itself
+    laplacian_operator = np.array([[-1, -1, -1], [-1, 8, -1], [-1, -1, -1]])
+    laplacian_image = np.abs(
+        convolve(image.astype(float), laplacian_operator, mode="constant")
+    )
     return laplacian_image
+
 
 def heterogeneity_func(image):
     # Logarithm of the image intensity
@@ -35,6 +39,7 @@ def heterogeneity_func(image):
     heterogeneity = normalized_laplacian * normalized_intensity
 
     return heterogeneity
+
 
 image_path = r"D:\\Pranav\\Pictures\\Saved Pictures\\1_amplitude.jpg"
 image = read_image(image_path)
