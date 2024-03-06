@@ -155,6 +155,8 @@ class Canny(tk.Frame):
         edge = cv.Canny(image=np.array(self.image), threshold1=int(self.down),threshold2=int(self.up), apertureSize=3) 
         cv.imshow('Canny Filtered', edge) 
 
+
+
 class KMs(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
