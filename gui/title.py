@@ -5,8 +5,10 @@ import cv2 as cv
 from sklearn.cluster import KMeans
 import os
 import shutil
+
 """
 TODO: 
+1. Thresholding
 
 used this for writing the oop code
 https://stackoverflow.com/questions/7546050/switch-between-two-frames-in-tkinter
@@ -16,7 +18,32 @@ https://stackoverflow.com/questions/7546050/switch-between-two-frames-in-tkinter
 filepath = "C:\\Users\\Pranav\\Downloads\\1_phase.jpg"
 DEFAULT_BUTTON_WIDTH = 20
 DEFAULT_BUTTON_HEIGHT = 10
-    
+
+
+# HELPER
+def save_image(self):
+    file_path = tkinter.filedialog.asksaveasfilename(
+        defaultextension=".jpg", filetypes=(("JPG file", "*.jpg"), ("All Files", "*.*"))
+    )
+    if not file_path:
+        return
+    self.image.save(file_path)
+
+def upload_image(self):
+    file_path = tkinter.filedialog.askopenfilename()
+    if file_path:
+        try:
+            with open(file_path, "rb") as f:
+                self.image = Image.open(f)
+                tk_img = ImageTk.PhotoImage(self.image)
+        except IOError:
+            print("Unable to open image file:", file_path)
+        except Exception as e:
+            print("An error occurred:", e)
+        self.img_label.configure(image=tk_img)
+        self.img_label.image = tk_img
+
+
 class SampleApp(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
@@ -63,22 +90,20 @@ class StartPage(tk.Frame):
         to_kmeans = tk.Button(
             self, text="K-Means", command=lambda: controller.show_frame("KMs")
         )
-        label.grid(row=0,column=0, sticky="nsew")
-        to_canny.grid(row=1,column=0, sticky="nsew")
-        to_kmeans.grid(row=2,column=0, sticky="nsew")
+        label.grid(row=0, column=0, sticky="nsew")
+        to_canny.grid(row=1, column=0, sticky="nsew")
+        to_kmeans.grid(row=2, column=0, sticky="nsew")
 
 
 class Canny(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-
+        self.down = 0
+        self.up = 0
         label = tk.Label(self, text="Canny")
-        label.pack(side="top", fill="x", pady=10)
-
         self.image = Image.open(filepath)
         self.tk_img = ImageTk.PhotoImage(self.image)
-        label2 = tk.Label(self, image=self.tk_img)
-        label2.pack()
+        self.img_label = tk.Label(self, image=self.tk_img)
 
         self.test_label = tk.Label(self, bg="white", fg="black", width=20, text="")
         low_thres = tk.Scale(
@@ -101,21 +126,34 @@ class Canny(tk.Frame):
             showvalue=0,
             command=self.slider_output_up,
         )
-        low_thres.pack()
-        up_thres.pack()
-        self.test_label.pack()
-
+        save_button = tk.Button(self, text="Save", command=lambda: save_image(self))
+        upload_button = tk.Button(
+            self, text="Upload", command=lambda: upload_image(self)
+        )
         to_menu = tk.Button(
             self, text="Menu", command=lambda: controller.show_frame("StartPage")
         )
-        to_menu.pack()
+
+        self.img_label.grid(row=0, column=0, rowspan=3, columnspan=3, sticky="nesw")
+
+        to_menu.grid(row=3, column=0, sticky="nesw")
+        self.test_label.grid(row=6,column = 0, columnspan=3)
+        up_thres.grid(row=4,column = 0, columnspan=3)
+        low_thres.grid(row=5,column = 0, columnspan=3)
+        label.grid(row=7, column=1, sticky="nesw")
+        save_button.grid(row=3, column=1, sticky="nesw")
+        upload_button.grid(row=3, column=2, sticky="nsew")
+
 
     def slider_output_low(self, v):
-        self.test_label.config(text=v)
-
+        self.down = v
+        self.canny_wrapper()
     def slider_output_up(self, v):
-        self.test_label.config(text=v)
-
+        self.up = v
+        self.canny_wrapper()
+    def canny_wrapper(self):
+        edge = cv.Canny(image=np.array(self.image), threshold1=int(self.down),threshold2=int(self.up), apertureSize=3) 
+        cv.imshow('Canny Filtered', edge) 
 
 class KMs(tk.Frame):
     def __init__(self, parent, controller):
@@ -126,14 +164,18 @@ class KMs(tk.Frame):
         self.image = Image.open(filepath)
         self.tk_img = ImageTk.PhotoImage(self.image)
         self.img_label = tk.Label(self, image=self.tk_img)
-        denoise_button = tk.Button(self, text="Non-Local Means+K-Means", command=self.denoise)
+        denoise_button = tk.Button(
+            self, text="Non-Local Means+K-Means", command=self.denoise
+        )
         to_menu = tk.Button(
             self,
             text="Back to Menu",
             command=lambda: controller.show_frame("StartPage"),
         )
-        save_button = tk.Button(self, text="Save", command=self.save_image)
-        upload_button = tk.Button(self, text = "Upload Image", command=self.upload_image)
+        save_button = tk.Button(self, text="Save", command=lambda: save_image(self))
+        upload_button = tk.Button(
+            self, text="Upload Image", command=lambda: upload_image(self)
+        )
 
         self.img_label.grid(row=0, column=0, rowspan=3, columnspan=3, sticky="nesw")
 
@@ -141,28 +183,9 @@ class KMs(tk.Frame):
         save_button.grid(row=3, column=1, sticky="nesw")
         denoise_button.grid(row=3, column=2, sticky="nesw")
 
-        upload_button.grid(row=4, column=1, sticky = "nsew")
+        upload_button.grid(row=4, column=1, sticky="nsew")
 
         label.grid(row=5, column=1, sticky="nesw")
-
-    def upload_image(self):
-        file_path = tkinter.filedialog.askopenfilename()
-        if file_path:
-            try:
-                with open(file_path, 'rb') as f:
-                    self.image = Image.open(f)
-                    tk_img = ImageTk.PhotoImage(self.image)
-            except IOError:
-                print("Unable to open image file:", file_path)
-            except Exception as e:
-                print("An error occurred:", e)
-            self.img_label.configure(image=tk_img)
-            self.img_label.image = tk_img
-
-    def save_image(self):
-        file_path = tkinter.filedialog.asksaveasfilename(defaultextension='.jpg',filetypes=(("JPG file", "*.jpg"),("All Files", "*.*") ))
-        if not file_path: return
-        self.image.save(file_path)
 
     def denoise(self):
         im_array = cv.fastNlMeansDenoisingColored(
@@ -218,6 +241,7 @@ class KMs(tk.Frame):
 def main():
     app = SampleApp()
     app.mainloop()
+
 
 if __name__ == "__main__":
     main()
