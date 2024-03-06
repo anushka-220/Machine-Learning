@@ -1,21 +1,22 @@
-import tkinter as tk
+import tkinter as tk, tkinter.filedialog
 from PIL import ImageTk, Image
 import numpy as np
 import cv2 as cv
 from sklearn.cluster import KMeans
-
+import os
+import shutil
 """
 TODO: 
-1. implement persistence and saving the image
 
 used this for writing the oop code
 https://stackoverflow.com/questions/7546050/switch-between-two-frames-in-tkinter
 
 """
 
-filepath = "1_phase.jpg"
-
-
+filepath = "C:\\Users\\Pranav\\Downloads\\1_phase.jpg"
+DEFAULT_BUTTON_WIDTH = 20
+DEFAULT_BUTTON_HEIGHT = 10
+    
 class SampleApp(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
@@ -55,22 +56,21 @@ class StartPage(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
         label = tk.Label(self, text="Menu")
-        label.pack(side="top", fill="x", pady=10)
 
         to_canny = tk.Button(
             self, text="Canny", command=lambda: controller.show_frame("Canny")
         )
-        to_canny.pack()
         to_kmeans = tk.Button(
             self, text="K-Means", command=lambda: controller.show_frame("KMs")
         )
-        to_kmeans.pack()
+        label.grid(row=0,column=0, sticky="nsew")
+        to_canny.grid(row=1,column=0, sticky="nsew")
+        to_kmeans.grid(row=2,column=0, sticky="nsew")
 
 
 class Canny(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        self.controller = controller
 
         label = tk.Label(self, text="Canny")
         label.pack(side="top", fill="x", pady=10)
@@ -123,20 +123,46 @@ class KMs(tk.Frame):
         self.controller = controller
 
         label = tk.Label(self, text="K-Means")
-        label.pack(side="top", fill="x", pady=10)
-
         self.image = Image.open(filepath)
         self.tk_img = ImageTk.PhotoImage(self.image)
         self.img_label = tk.Label(self, image=self.tk_img)
-        self.img_label.pack()
-
-        denoise_button = tk.Button(self, text="denoise", command=self.denoise)
-        denoise_button.pack()
-
+        denoise_button = tk.Button(self, text="Non-Local Means+K-Means", command=self.denoise)
         to_menu = tk.Button(
-            self, text="Menu", command=lambda: controller.show_frame("StartPage")
+            self,
+            text="Back to Menu",
+            command=lambda: controller.show_frame("StartPage"),
         )
-        to_menu.pack()
+        save_button = tk.Button(self, text="Save", command=self.save_image)
+        upload_button = tk.Button(self, text = "Upload Image", command=self.upload_image)
+
+        self.img_label.grid(row=0, column=0, rowspan=3, columnspan=3, sticky="nesw")
+
+        to_menu.grid(row=3, column=0, sticky="nesw")
+        save_button.grid(row=3, column=1, sticky="nesw")
+        denoise_button.grid(row=3, column=2, sticky="nesw")
+
+        upload_button.grid(row=4, column=1, sticky = "nsew")
+
+        label.grid(row=5, column=1, sticky="nesw")
+
+    def upload_image(self):
+        file_path = tkinter.filedialog.askopenfilename()
+        if file_path:
+            try:
+                with open(file_path, 'rb') as f:
+                    self.image = Image.open(f)
+                    tk_img = ImageTk.PhotoImage(self.image)
+            except IOError:
+                print("Unable to open image file:", file_path)
+            except Exception as e:
+                print("An error occurred:", e)
+            self.img_label.configure(image=tk_img)
+            self.img_label.image = tk_img
+
+    def save_image(self):
+        file_path = tkinter.filedialog.asksaveasfilename(defaultextension='.jpg',filetypes=(("JPG file", "*.jpg"),("All Files", "*.*") ))
+        if not file_path: return
+        self.image.save(file_path)
 
     def denoise(self):
         im_array = cv.fastNlMeansDenoisingColored(
@@ -163,7 +189,6 @@ class KMs(tk.Frame):
             for i in clt.cluster_centers_
             if (i.sum() == np.max([i.sum() for i in clt.cluster_centers_]))
         ][0]
-        # print(clt.cluster_centers_)
         for y in range(0, h):
             for x in range(0, w):
                 pix_arr = pix_val[x, y]
@@ -183,7 +208,9 @@ class KMs(tk.Frame):
                     or ((maxi[2] - delta) <= b <= (maxi[2] + delta))
                 ):
                     pix_val[x, y] = [235, 168, 75]
-        tk_img2 = ImageTk.PhotoImage(Image.fromarray(pix_val.astype("uint8"), "RGB"))
+
+        self.image = Image.fromarray(pix_val.astype("uint8"), "RGB")
+        tk_img2 = ImageTk.PhotoImage(self.image)
         self.img_label.configure(image=tk_img2)
         self.img_label.image = tk_img2
 
@@ -191,7 +218,6 @@ class KMs(tk.Frame):
 def main():
     app = SampleApp()
     app.mainloop()
-
 
 if __name__ == "__main__":
     main()
