@@ -9,6 +9,8 @@ import shutil
 """
 TODO: 
 1. Thresholding
+2. Fourier Filtering
+3. Image Stacking
 
 used this for writing the oop code
 https://stackoverflow.com/questions/7546050/switch-between-two-frames-in-tkinter
@@ -59,7 +61,7 @@ class SampleApp(tk.Tk):
 
         # self.geometry("600x600")
         self.frames = {}
-        for F in (StartPage, Canny, KMs):
+        for F in (StartPage, Canny, KMs, AT):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
@@ -90,11 +92,76 @@ class StartPage(tk.Frame):
         to_kmeans = tk.Button(
             self, text="K-Means", command=lambda: controller.show_frame("KMs")
         )
+        to_at = tk.Button(
+            self, text="Adaptive Threshold", command=lambda: controller.show_frame("AT")
+        )
         label.grid(row=0, column=0, sticky="nsew")
         to_canny.grid(row=1, column=0, sticky="nsew")
         to_kmeans.grid(row=2, column=0, sticky="nsew")
+        to_at.grid(row=3, column=0, sticky='nsew')
 
+class AT(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
 
+        self.up = 1
+        self.down = 1
+        label = tk.Label(self, text="Adaptive Thresholding")
+        self.image = Image.open(filepath)
+        self.tk_img = ImageTk.PhotoImage(self.image)
+        self.img_label = tk.Label(self, image=self.tk_img)       
+        thres_1 = tk.Scale(
+            self,
+            label="Local Region Size",
+            from_=1,
+            to=255,
+            orient=tk.HORIZONTAL,
+            length=200,
+            showvalue=1,
+            command=self._size,
+        )
+        # thres_2 = tk.Scale(
+        #     self,
+        #     label="Consant",
+        #     from_=-20,
+        #     to=20,
+        #     orient=tk.HORIZONTAL,
+        #     length=200,
+        #     showvalue=1,
+        #     command=self._const,
+        # )
+        save_button = tk.Button(self, text="Save", command=lambda: save_image(self))
+        upload_button = tk.Button(
+            self, text="Upload", command=lambda: upload_image(self)
+        )
+        to_menu = tk.Button(
+            self, text="Menu", command=lambda: controller.show_frame("StartPage")
+        )
+        self.img_label.grid(row=0, column=0, rowspan=3, columnspan=3, sticky="nesw")
+
+        to_menu.grid(row=3, column=0, sticky="nesw")
+        thres_1.grid(row=4,column = 0, columnspan=3)
+        # thres_2.grid(row=5,column = 0, columnspan=3)
+        label.grid(row=7, column=1, sticky="nesw")
+        save_button.grid(row=3, column=1, sticky="nesw")
+        upload_button.grid(row=3, column=2, sticky="nsew")
+
+        
+    def _size(self, v):
+        v = int(v)
+        if (v%2 == 0):
+            v -= 1
+        self.up = v
+        self.thres_wrap()
+
+    def _const(self, v):
+        self.down = v
+        self.thres_wrap()
+
+    def thres_wrap(self):
+        _, t = cv.threshold(cv.cvtColor(np.array(self.image), cv.COLOR_BGR2GRAY), self.up, 255,cv.THRESH_BINARY)
+        cv.imshow('Adaptive Threshold', t) 
+    
 class Canny(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
